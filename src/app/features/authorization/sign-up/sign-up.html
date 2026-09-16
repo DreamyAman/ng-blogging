@@ -1,0 +1,41 @@
+
+<div class="d-flex justify-content-center align-items-center vh-100">
+  <div class="card shadow-sm p-4" style="width: 450px;">
+    <h2 class="text-center fw-bold mb-4">Create account</h2>
+
+    <form [formGroup]="signUpForm" (ngSubmit)="onSignUp()">
+      <div class="mb-3">
+        <label class="form-label fw-semibold">First name</label>
+        <input type="text" class="form-control" formControlName="firstName">
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Last name <span class="fw-normal text-muted">(optional)</span></label>
+        <input type="text" class="form-control" formControlName="lastName">
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Email</label>
+        <input type="email" class="form-control" formControlName="email">
+      </div>
+
+      <div class="mb-1">
+        <label class="form-label fw-semibold">Password</label>
+        <input type="password" class="form-control" formControlName="password">
+      </div>
+      <div class="form-text mb-3">Minimum 6 characters</div>
+
+      <div class="mb-4">
+        <label class="form-label fw-semibold">Phone <span class="fw-normal text-muted">(optional)</span></label>
+        <input type="tel" class="form-control" formControlName="phone">
+      </div>
+
+      <button type="submit" class="btn btn-primary w-100">Create account</button>
+    </form>
+
+    <p class="text-center mt-3 mb-0">
+      Already have an account? <a routerLink="/login">Log in</a>
+    </p>
+  </div>
+</div>
+

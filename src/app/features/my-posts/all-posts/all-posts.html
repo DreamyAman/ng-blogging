@@ -1,0 +1,88 @@
+<body class="bg-light">
+
+  <div class="container py-5" style="max-width: 960px;">
+
+    <h1 class="fw-bold text-dark mb-4">My posts</h1>
+
+    <div class="mb-4">
+      <label class="form-label text-secondary fw-medium mb-1 small">Status</label>
+      <select class="form-select w-auto">
+        <option>All</option>
+        <option>Published</option>
+        <option>Archived</option>
+        <option>Draft</option>
+      </select>
+    </div>
+
+    @if(userPosts().length===0){
+      <div class="justify-content-center align-items-center pb-3">
+        <h3>You have No Post please Create one!</h3>
+      </div>
+    }
+    <div class="border rounded-3 overflow-hidden bg-white">
+      <table class="table table-hover align-middle mb-0">
+
+        <thead class="border-bottom">
+          <tr>
+            <th class="px-4 py-3 text-secondary fw-semibold small">Title</th>
+            <th class="px-4 py-3 text-secondary fw-semibold small text-center">Status</th>
+            <th class="px-4 py-3 text-secondary fw-semibold small text-center">Updated</th>
+            <th class="px-4 py-3 text-secondary fw-semibold small text-center">Actions</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          @for (post of userPosts(); track post.id) {
+          <tr>
+            <td class="px-4 py-4 fw-semibold text-dark" routerLink="/my-posts/view-post/{{post.id}}">{{post.title}}</td>
+            <td class="px-4 py-4 text-center">
+              @if(post.status==='PUBLISHED'){
+              <span
+                class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 rounded-2 fw-bold"
+                style="font-size: .70rem; letter-spacing: .04em;">{{post.status}}</span>
+              }
+              @else if(post.status==='DRAFT') {
+              <span
+                class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle fw-normal px-2 py-1">DRAFT</span>
+              }
+              @else {
+              <span class="badge bg-secondary-subtle text-muted border border-mute-subtle px-3 py-2 rounded-2 fw-bold"
+                style="font-size: .70rem; letter-spacing: .04em;">{{post.status}}</span>
+              }
+            </td>
+            <td class="px-4 py-4 text-center text-secondary small">{{ post.updatedAt | date:'dd MMM yyyy' }}</td>
+            <td class="px-4 py-4 text-center">
+              <a class="link-primary text-decoration-none fw-medium small"
+                routerLink="/my-posts/edit-post/{{post.id}}">Edit</a>
+              <span class="text-secondary-emphasis mx-1 small">•</span>
+              @if (post.status === 'PUBLISHED') {
+              <span class="link-success text-decoration-none fw-medium small text-muted ">
+                Publish
+              </span>
+              } @else {
+              <a class="link-success text-decoration-none fw-medium small cursor-pointer hover-link"
+                (click)="updateBlogStatus(post.id, 'PUBLISHED')" $event.preventDefault() >
+                Publish
+              </a>
+              }
+              @if (post.status === 'ARCHIVED') {
+              <span class="text-decoration-none fw-medium small text-muted">
+                Archived
+              </span>
+              } @else {
+              <a class="link-secondary text-decoration-none fw-medium small cursor-pointer hover-link"
+                (click)="updateBlogStatus(post.id, 'ARCHIVED')" $event.preventDefault()>
+                Archived
+              </a>
+              }
+            </td>
+          </tr>
+          }
+
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+</body>

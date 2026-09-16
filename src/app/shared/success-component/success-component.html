@@ -1,0 +1,17 @@
+@if (success()===true) {
+  <div class="alert alert-success shadow-sm position-fixed end-0 me-4 d-flex align-items-start"
+       style="top: 100px; max-width: 380px; z-index: 1050;">
+
+    <i class="bi bi-exclamation-circle-fill me-2 mt-1"></i>
+
+    <div class="flex-grow-1">
+      <ul class="mb-0 ps-3 small">
+        @for (success of successList(); track $index) {
+          <li>{{ success }}</li>
+        }
+      </ul>
+    </div>
+
+    <button type="button" class="btn-close ms-3"></button>
+  </div>
+}

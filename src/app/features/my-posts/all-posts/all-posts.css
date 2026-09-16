@@ -1,0 +1,10 @@
+.hover-link {
+  text-decoration: none;
+  color: #333;
+}
+
+.hover-link:hover {
+  text-decoration: underline !important;
+  text-decoration-color: #007bff !important;  
+  text-underline-offset: 4px; 
+}

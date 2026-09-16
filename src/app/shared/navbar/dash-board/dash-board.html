@@ -1,0 +1,6 @@
+@if (authService.isLoggedIn()) {
+  <app-create-blog></app-create-blog>
+  <app-profile [profileInfo]="profileInfo()" [userName]="userName"></app-profile>
+} @else {
+  <app-redirect-auth></app-redirect-auth>
+}

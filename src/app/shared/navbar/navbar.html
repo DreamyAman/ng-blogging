@@ -1,0 +1,12 @@
+<nav class="navbar bg-white border-bottom py-3 position-sticky sticky-top">
+  <div class="container d-flex align-items-center justify-content-between">
+    <a class="navbar-brand fw-bold fs-4 mb-0 cursor-pointer" routerLink="blogs">Blogging</a>
+    @if(authService.isLoggedIn()===true){<a class="link" routerLink="/my-posts">My Posts</a>}
+
+    <div class="flex-grow-1 mx-4 d-flex justify-content-center">
+      <app-search-bar class="w-100" style="max-width: 480px;"></app-search-bar>
+    </div>
+
+    <app-dashboard></app-dashboard>
+  </div>
+</nav>
