@@ -8,7 +8,9 @@
   "targets": {
     "build": {
       "executor": "@angular/build:application",
-      "outputs": ["{options.outputPath}"],
+      "outputs": [
+        "{options.outputPath}"
+      ],
       "defaultConfiguration": "production",
       "options": {
         "outputPath": "dist/apps/ng-blogging",
@@ -21,7 +23,13 @@
             "input": "apps/ng-blogging/public"
           }
         ],
-        "styles": ["apps/ng-blogging/src/styles.scss"]
+        "styles": [
+          "apps/ng-blogging/src/styles.scss",
+          "node_modules/bootstrap/dist/css/bootstrap.min.css"
+        ],
+        "scripts": [
+          "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"
+        ]
       },
       "configurations": {
         "production": {

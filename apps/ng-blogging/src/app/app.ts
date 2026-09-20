@@ -1,13 +1,9 @@
-import { Component } from '@angular/core';
-import { RouterModule } from '@angular/router';
-import { NxWelcome } from './nx-welcome';
+import { Component } from "@angular/core";
+import { RouterOutlet } from "@angular/router";
 
 @Component({
-  imports: [NxWelcome, RouterModule],
-  selector: 'app-root',
-  templateUrl: './app.html',
-  styleUrl: './app.scss',
+  imports: [RouterOutlet],
+  selector: "app-root",
+  template: `<router-outlet></router-outlet>`,
 })
-export class App {
-  protected title = 'ng-blogging';
-}
+export class App {}

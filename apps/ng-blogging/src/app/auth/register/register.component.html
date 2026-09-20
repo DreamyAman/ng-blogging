@@ -1,0 +1,115 @@
+<article class="d-flex justify-content-center align-items-center vh-100">
+  <section class="card shadow-sm p-4" style="width: 450px;">
+    <h2 class="text-center fw-bold mb-4">Create account</h2>
+
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="needs-validation">
+      <div class="mb-4">
+        <label for="firstName" class="form-label fw-semibold">First name <span class="text-danger">*</span></label>
+        <input type="text" class="form-control" [ngClass]="fnError.isInvalid() ? 'is-invalid' : ''" name="firstName"
+          id="firstName" formControlName="firstName" required>
+
+        <div class="form-text">Must be 4-24 characters long.</div>
+
+        <app-form-field-error #fnError [formErrorMessages]="formErrorMessages" controlName="firstName">
+          <ng-template let-errorMsg="error">
+            <div class="text-danger">
+              {{ errorMsg() }}
+            </div>
+          </ng-template>
+        </app-form-field-error>
+      </div>
+
+      <div class="mb-4">
+        <label for="lastName" class="form-label fw-semibold">Last name <span
+            class="fw-normal text-muted">(optional)</span></label>
+        <input type="text" class="form-control" [ngClass]="lnError.isInvalid() ? 'is-invalid' : ''" name="lastName"
+          id="lastName" formControlName="lastName">
+
+        <div class="form-text">Must be 4-20 characters long.</div>
+
+        <app-form-field-error #lnError [formErrorMessages]="formErrorMessages" controlName="lastName">
+          <ng-template let-errorMsg="error">
+            <div class="text-danger">
+              {{ errorMsg() }}
+            </div>
+          </ng-template>
+        </app-form-field-error>
+      </div>
+
+      <div class="mb-4">
+        <label for="email" class="form-label fw-semibold">Email <span class="text-danger">*</span></label>
+        <input type="email" class="form-control" [ngClass]="emailError.isInvalid() ? 'is-invalid' : ''" name="email"
+          id="email" formControlName="email" required>
+
+        <div class="form-text">We'll never share your email with anyone else.</div>
+
+        <app-form-field-error #emailError [formErrorMessages]="formErrorMessages" controlName="email">
+          <ng-template let-errorMsg="error">
+            <div class="text-danger">
+              {{ errorMsg() }}
+            </div>
+          </ng-template>
+        </app-form-field-error>
+      </div>
+
+      <div class="mb-4">
+        <label for="password" class="form-label fw-semibold">Password <span class="text-danger">*</span></label>
+        <input type="password" class="form-control" [ngClass]="passwordError.isInvalid() ? 'is-invalid' : ''"
+          name="password" id="password" formControlName="password" required>
+        <div class="form-text">Your password must be 6-10 characters long.</div>
+
+        <app-form-field-error #passwordError [formErrorMessages]="formErrorMessages" controlName="password">
+          <ng-template let-errorMsg="error">
+            <div class="text-danger">
+              {{ errorMsg() }}
+            </div>
+          </ng-template>
+        </app-form-field-error>
+      </div>
+
+      <div class="mb-4">
+        <label for="phone" class="form-label fw-semibold">Phone <span
+            class="fw-normal text-muted">(optional)</span></label>
+        <input type="tel" class="form-control" [ngClass]="phoneError.isInvalid() ? 'is-invalid' : ''" name="phone"
+          id="phone" formControlName="phone">
+        <app-form-field-error #phoneError [formErrorMessages]="formErrorMessages" controlName="phone">
+          <ng-template let-errorMsg="error">
+            <div class="text-danger">
+              {{ errorMsg() }}
+            </div>
+          </ng-template>
+        </app-form-field-error>
+      </div>
+
+      <div class="form-check mb-4">
+        <input class="form-check-input" type="checkbox" value="" formControlName="terms" id="invalidCheck" required>
+        <label class="form-check-label" for="invalidCheck">
+          Agree to terms and conditions
+        </label>
+
+        <app-form-field-error #termsError [formErrorMessages]="formErrorMessages" controlName="terms">
+          <ng-template let-errorMsg="error">
+            <div class="text-danger">
+              {{ errorMsg() }}
+            </div>
+          </ng-template>
+        </app-form-field-error>
+      </div>
+
+      <button type="submit" [disabled]="isSubmitting()" class="btn btn-primary w-100">
+
+
+        @if(!isSubmitting()) {
+        <span>Create account</span>
+        } @else {
+        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        Creating...
+        }
+      </button>
+    </form>
+
+    <p class="text-center mt-3 mb-0">
+      Already have an account? <a routerLink="/auth/login">Log in</a>
+    </p>
+  </section>
+</article>
