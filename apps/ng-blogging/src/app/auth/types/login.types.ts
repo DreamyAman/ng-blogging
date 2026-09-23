@@ -6,3 +6,8 @@ export interface IUserAndAccessToken {
 }
 
 export type ILoginResponse = IApiResponse<IUserAndAccessToken>;
+
+export interface ILoginRequest {
+  email: string;
+  password: string;
+}

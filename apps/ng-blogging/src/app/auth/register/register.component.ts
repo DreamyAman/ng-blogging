@@ -8,6 +8,12 @@ import { NgClass } from "@angular/common";
 import { updateValueAndValidity } from "../../common/form/utils/form.utils";
 import { AuthApiService } from "../services/auth-api.service";
 import { ICreateUserRequest } from "../types";
+import {
+  ErrorStatus,
+  IFieldViolation,
+  ISerializedErrorResponse,
+} from "../../common/types";
+import { Router } from "@angular/router";
 
 @Component({
   imports: [ReactiveFormsModule, FormFieldError, NgClass],
@@ -19,6 +25,8 @@ export class RegisterComponent {
   private readonly fb = inject(FormBuilder);
 
   public isInvalid = input.required<boolean>();
+
+  public router = inject(Router);
 
   protected readonly registerForm = this.fb.group({
     firstName: [
@@ -86,12 +94,68 @@ export class RegisterComponent {
       .value as unknown as ICreateUserRequest;
 
     this.authApi.register(registerReq).subscribe({
-      next: () => void 0,
-      error: () => void 0,
+      next: () => {
+        this.router.navigate(["/feed"]).then();
+      },
+      error: (error: ISerializedErrorResponse) =>
+        this.handleServerErrorResp(error),
       complete: () => {
+        console.log("Complete");
         this.registerForm.enable();
         this.isSubmitting.set(false);
       },
     });
+  }
+
+  private handleServerErrorResp(error: ISerializedErrorResponse) {
+    {
+      switch (error.status) {
+        case ErrorStatus.INVALID_ARGUMENT:
+          this.mapServerFormErrors(error);
+          break;
+
+        case ErrorStatus.ALREADY_EXISTS:
+          this.handleAlreadyExistsEmailError(error.message);
+          break;
+
+        default:
+          this.handleUnknownError(error.message);
+          break;
+      }
+    }
+  }
+
+  private handleUnknownError(message: string) {
+    // TODO: we need to handle this as well
+    console.log(message);
+  }
+
+  private handleAlreadyExistsEmailError(message: string) {
+    this.registerForm.controls.email.setErrors({
+      alreadyExists: message,
+    });
+
+    updateValueAndValidity(this.registerForm);
+  }
+
+  private mapServerFormErrors(error: ISerializedErrorResponse) {
+    const violations = error.details as IFieldViolation[];
+
+    violations.forEach((fieldViolation) => {
+      const formControl =
+        this.registerForm.controls[
+          fieldViolation.field as keyof typeof this.registerForm.controls
+        ];
+
+      if (formControl) {
+        formControl.setErrors({
+          serverError: fieldViolation.description,
+        });
+      }
+    });
+
+    updateValueAndValidity(this.registerForm);
+
+    console.log(this.registerForm.controls);
   }
 }
