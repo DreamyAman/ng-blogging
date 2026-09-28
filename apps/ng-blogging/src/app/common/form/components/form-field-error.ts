@@ -79,10 +79,30 @@ export class FormFieldError implements OnInit {
       return;
     }
 
-    const formFieldErrors = this.formErrorMessages()[this.controlName()];
+    // form control raw errors { minlength: {..}, serverError: "Email already exists." }
+    const formControlErrors = this.formControl.errors;
+
+    // form field ui readable error messages
+    const uiErrorMessages = this.formErrorMessages()[this.controlName()];
+
+    // combine all the raw errors and transform them into our convention
+    const formFieldErrors: IFormFieldError[] = Object.entries(
+      formControlErrors || {},
+    ).map(([errName, errDesc]) => {
+      const uiMessage = uiErrorMessages.find((err) => errName === err.type);
+
+      return {
+        type: errName,
+        message: uiMessage ? uiMessage.message : errDesc.toString(),
+      };
+    });
 
     for (const error of formFieldErrors || []) {
       if (this.formControl.hasError(error.type)) {
+        if (error.type === "serverError") {
+          console.log(error);
+        }
+
         this.errorMessage.set(error.message);
 
         return;

@@ -14,6 +14,7 @@ import {
   ISerializedErrorResponse,
 } from "../../common/types";
 import { Router } from "@angular/router";
+import { startWithTap } from "../../common/rxjs/operators";
 
 @Component({
   imports: [ReactiveFormsModule, FormFieldError, NgClass],
@@ -87,28 +88,29 @@ export class RegisterComponent {
       return;
     }
 
-    this.registerForm.disable();
-    this.isSubmitting.set(true);
-
     const registerReq = this.registerForm
       .value as unknown as ICreateUserRequest;
 
-    this.authApi.register(registerReq).subscribe({
-      next: () => {
-        this.router.navigate(["/feed"]).then();
-      },
-      error: (error: ISerializedErrorResponse) =>
-        this.handleServerErrorResp(error),
-      complete: () => {
-        console.log("Complete");
-        this.registerForm.enable();
-        this.isSubmitting.set(false);
-      },
-    });
+    this.authApi
+      .register(registerReq)
+      .pipe(
+        startWithTap(() => {
+          this.registerForm.disable();
+          this.isSubmitting.set(true);
+        }),
+      )
+      .subscribe({
+        next: () => this.router.navigate(["/feed"]),
+        error: (error: ISerializedErrorResponse) =>
+          this.handleServerErrorResp(error),
+      });
   }
 
   private handleServerErrorResp(error: ISerializedErrorResponse) {
     {
+      this.registerForm.enable();
+      this.isSubmitting.set(false);
+
       switch (error.status) {
         case ErrorStatus.INVALID_ARGUMENT:
           this.mapServerFormErrors(error);
@@ -131,11 +133,12 @@ export class RegisterComponent {
   }
 
   private handleAlreadyExistsEmailError(message: string) {
-    this.registerForm.controls.email.setErrors({
-      alreadyExists: message,
-    });
-
-    updateValueAndValidity(this.registerForm);
+    this.registerForm.controls.email.setErrors(
+      {
+        alreadyExists: message,
+      },
+      { emitEvent: true },
+    );
   }
 
   private mapServerFormErrors(error: ISerializedErrorResponse) {
@@ -148,14 +151,13 @@ export class RegisterComponent {
         ];
 
       if (formControl) {
-        formControl.setErrors({
-          serverError: fieldViolation.description,
-        });
+        formControl.setErrors(
+          {
+            serverError: fieldViolation.description,
+          },
+          { emitEvent: true },
+        );
       }
     });
-
-    updateValueAndValidity(this.registerForm);
-
-    console.log(this.registerForm.controls);
   }
 }

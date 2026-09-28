@@ -18,10 +18,8 @@ export class AuthApiService {
   ): Observable<ILoginResponse> {
     return this.http
       .post<ILoginResponse>(`${this.authApiUrl}/register`, {
-        lastName: "Rana",
-        email: "a.com",
-        phone: "1234567",
-        password: "123456789",
+        ..._createUserRequest,
+        email: "amankafun@gmail.com",
       })
       .pipe(catchError(handleApiError));
   }
