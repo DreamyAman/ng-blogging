@@ -1,4 +1,4 @@
-import { Component, inject, input, signal } from "@angular/core";
+import { Component, inject, input, OnInit, signal } from "@angular/core";
 import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
 import {
   FormFieldError,
@@ -6,7 +6,6 @@ import {
 } from "../../common/form/components/form-field-error";
 import { NgClass } from "@angular/common";
 import { updateValueAndValidity } from "../../common/form/utils/form.utils";
-import { AuthApiService } from "../services/auth-api.service";
 import { ICreateUserRequest } from "../types";
 import {
   ErrorStatus,
@@ -15,6 +14,7 @@ import {
 } from "../../common/types";
 import { Router } from "@angular/router";
 import { startWithTap } from "../../common/rxjs/operators";
+import { AuthService } from "../services/auth.service";
 
 @Component({
   imports: [ReactiveFormsModule, FormFieldError, NgClass],
@@ -22,7 +22,7 @@ import { startWithTap } from "../../common/rxjs/operators";
   templateUrl: "./register.component.html",
   styleUrl: "./register.component.scss",
 })
-export class RegisterComponent {
+export class RegisterComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
 
   public isInvalid = input.required<boolean>();
@@ -80,7 +80,12 @@ export class RegisterComponent {
 
   protected isSubmitting = signal(false);
 
-  private readonly authApi = inject(AuthApiService);
+  private readonly auth = inject(AuthService);
+
+  ngOnInit() {
+    console.log(this.auth.isAuthenticated());
+    console.log(this.auth.user());
+  }
 
   protected onSubmit() {
     if (this.registerForm.invalid) {
@@ -91,7 +96,7 @@ export class RegisterComponent {
     const registerReq = this.registerForm
       .value as unknown as ICreateUserRequest;
 
-    this.authApi
+    this.auth
       .register(registerReq)
       .pipe(
         startWithTap(() => {

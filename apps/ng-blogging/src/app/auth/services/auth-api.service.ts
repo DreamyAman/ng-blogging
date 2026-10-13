@@ -14,13 +14,10 @@ export class AuthApiService {
   private readonly http = inject(HttpClient);
 
   public register(
-    _createUserRequest: ICreateUserRequest,
+    createUserRequest: ICreateUserRequest,
   ): Observable<ILoginResponse> {
     return this.http
-      .post<ILoginResponse>(`${this.authApiUrl}/register`, {
-        ..._createUserRequest,
-        email: "amankafun@gmail.com",
-      })
+      .post<ILoginResponse>(`${this.authApiUrl}/register`, createUserRequest)
       .pipe(catchError(handleApiError));
   }
 
