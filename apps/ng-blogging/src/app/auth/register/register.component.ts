@@ -1,4 +1,4 @@
-import { Component, inject, input, OnInit, signal } from "@angular/core";
+import { Component, inject, input, signal } from "@angular/core";
 import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
 import {
   FormFieldError,
@@ -15,6 +15,7 @@ import {
 import { Router } from "@angular/router";
 import { startWithTap } from "../../common/rxjs/operators";
 import { AuthService } from "../services/auth.service";
+import { AlertService } from "../../common/alert/services";
 
 @Component({
   imports: [ReactiveFormsModule, FormFieldError, NgClass],
@@ -22,7 +23,7 @@ import { AuthService } from "../services/auth.service";
   templateUrl: "./register.component.html",
   styleUrl: "./register.component.scss",
 })
-export class RegisterComponent implements OnInit {
+export class RegisterComponent {
   private readonly fb = inject(FormBuilder);
 
   public isInvalid = input.required<boolean>();
@@ -82,10 +83,7 @@ export class RegisterComponent implements OnInit {
 
   private readonly auth = inject(AuthService);
 
-  ngOnInit() {
-    console.log(this.auth.isAuthenticated());
-    console.log(this.auth.user());
-  }
+  private readonly alert = inject(AlertService);
 
   protected onSubmit() {
     if (this.registerForm.invalid) {
@@ -133,8 +131,7 @@ export class RegisterComponent implements OnInit {
   }
 
   private handleUnknownError(message: string) {
-    // TODO: we need to handle this as well
-    console.log(message);
+    this.alert.error("Failed", message);
   }
 
   private handleAlreadyExistsEmailError(message: string) {

@@ -17,7 +17,7 @@ export class AuthApiService {
     createUserRequest: ICreateUserRequest,
   ): Observable<ILoginResponse> {
     return this.http
-      .post<ILoginResponse>(`${this.authApiUrl}/register`, createUserRequest)
+      .post<ILoginResponse>(`${this.authApiUrl}/regist`, createUserRequest)
       .pipe(catchError(handleApiError));
   }
 

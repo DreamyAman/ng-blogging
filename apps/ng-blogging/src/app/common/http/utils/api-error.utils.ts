@@ -28,8 +28,8 @@ export function handleApiError(errResp: HttpErrorResponse | Error) {
 
   // handle if not a network request
   if (errResp.status === 0) {
+    console.error(error.message);
     error.message =
-      errResp.message ||
       "Something went wrong. Please check your internet connection or try again after sometime.";
     error.status = ErrorStatus.UNKNOWN;
   }
