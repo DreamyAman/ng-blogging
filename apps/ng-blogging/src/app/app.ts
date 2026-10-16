@@ -12,7 +12,7 @@ export class App implements OnInit {
   private readonly alertService = inject(AlertService);
 
   ngOnInit(): void {
-    throw new Error("Unimplemented");
+    return void 0;
     // const courseAlertRef = this.alertService.open({
     //   type: AlertType.SUCCESS,
     //   title: "Hello world",

@@ -56,6 +56,13 @@ export function handleApiError(errResp: HttpErrorResponse | Error) {
     });
   }
 
+  // handle unauthenticated
+  else if (errResp.status === HttpStatusCode.Unauthorized) {
+    error.details = apiErrorResp.error.details.find((errorDetail) => {
+      return (errorDetail as IErrorType)["@type"].includes("ErrorInfo");
+    });
+  }
+
   // handle unknown errors
   else if (errResp.status < 500) {
     error.details = apiErrorResp.error.details.find((errorDetail) => {

@@ -1,4 +1,4 @@
-import { Component, inject, input, signal } from "@angular/core";
+import { Component, inject, signal } from "@angular/core";
 import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
 import {
   FormFieldError,
@@ -12,21 +12,19 @@ import {
   IFieldViolation,
   ISerializedErrorResponse,
 } from "../../common/types";
-import { Router } from "@angular/router";
+import { Router, RouterLink } from "@angular/router";
 import { startWithTap } from "../../common/rxjs/operators";
 import { AuthService } from "../services/auth.service";
 import { AlertService } from "../../common/alert/services";
 
 @Component({
-  imports: [ReactiveFormsModule, FormFieldError, NgClass],
+  imports: [ReactiveFormsModule, FormFieldError, NgClass, RouterLink],
   selector: "app-register",
   templateUrl: "./register.component.html",
   styleUrl: "./register.component.scss",
 })
 export class RegisterComponent {
   private readonly fb = inject(FormBuilder);
-
-  public isInvalid = input.required<boolean>();
 
   public router = inject(Router);
 
