@@ -5,13 +5,12 @@ import {
   IFormFieldsErrors,
 } from "../../common/form/components/form-field-error";
 import { NgClass } from "@angular/common";
-import { updateValueAndValidity } from "../../common/form/utils/form.utils";
-import { ICreateUserRequest } from "../types";
 import {
-  ErrorStatus,
-  IFieldViolation,
-  ISerializedErrorResponse,
-} from "../../common/types";
+  mapServerFormErrors,
+  updateValueAndValidity,
+} from "../../common/form/utils/form.utils";
+import { ICreateUserRequest } from "../types";
+import { ErrorStatus, ISerializedErrorResponse } from "../../common/types";
 import { Router, RouterLink } from "@angular/router";
 import { startWithTap } from "../../common/rxjs/operators";
 import { AuthService } from "../services/auth.service";
@@ -114,7 +113,7 @@ export class RegisterComponent {
 
       switch (error.status) {
         case ErrorStatus.INVALID_ARGUMENT:
-          this.mapServerFormErrors(error);
+          mapServerFormErrors(this.registerForm, error);
           break;
 
         case ErrorStatus.ALREADY_EXISTS:
@@ -122,14 +121,10 @@ export class RegisterComponent {
           break;
 
         default:
-          this.handleUnknownError(error.message);
+          this.alert.error("Failed", error.message);
           break;
       }
     }
-  }
-
-  private handleUnknownError(message: string) {
-    this.alert.error("Failed", message);
   }
 
   private handleAlreadyExistsEmailError(message: string) {
@@ -139,25 +134,5 @@ export class RegisterComponent {
       },
       { emitEvent: true },
     );
-  }
-
-  private mapServerFormErrors(error: ISerializedErrorResponse) {
-    const violations = error.details as IFieldViolation[];
-
-    violations.forEach((fieldViolation) => {
-      const formControl =
-        this.registerForm.controls[
-          fieldViolation.field as keyof typeof this.registerForm.controls
-        ];
-
-      if (formControl) {
-        formControl.setErrors(
-          {
-            serverError: fieldViolation.description,
-          },
-          { emitEvent: true },
-        );
-      }
-    });
   }
 }

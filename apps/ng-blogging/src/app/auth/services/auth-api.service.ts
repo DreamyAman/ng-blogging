@@ -1,7 +1,12 @@
 import { HttpClient } from "@angular/common/http";
 import { inject, Injectable } from "@angular/core";
 import { catchError, Observable } from "rxjs";
-import { ICreateUserRequest, ILoginRequest, ILoginResponse } from "../types";
+import {
+  ICreateUserRequest,
+  ILoginRequest,
+  ILoginResponse,
+  IRefreshTokenResponse,
+} from "../types";
 import { environment } from "../../../environments/environment";
 import { handleApiError } from "../../common/http/utils";
 
@@ -17,7 +22,7 @@ export class AuthApiService {
     createUserRequest: ICreateUserRequest,
   ): Observable<ILoginResponse> {
     return this.http
-      .post<ILoginResponse>(`${this.authApiUrl}/regist`, createUserRequest)
+      .post<ILoginResponse>(`${this.authApiUrl}/register`, createUserRequest)
       .pipe(catchError(handleApiError));
   }
 
@@ -25,5 +30,12 @@ export class AuthApiService {
     return this.http
       .post<ILoginResponse>(`${this.authApiUrl}/login`, loginCreds)
       .pipe(catchError(handleApiError));
+  }
+
+  public refreshToken() {
+    return this.http.post<IRefreshTokenResponse>(
+      `${this.authApiUrl}/refresh-token`,
+      {},
+    );
   }
 }
