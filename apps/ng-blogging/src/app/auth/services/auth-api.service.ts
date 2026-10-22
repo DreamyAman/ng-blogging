@@ -22,13 +22,17 @@ export class AuthApiService {
     createUserRequest: ICreateUserRequest,
   ): Observable<ILoginResponse> {
     return this.http
-      .post<ILoginResponse>(`${this.authApiUrl}/register`, createUserRequest)
+      .post<ILoginResponse>(`${this.authApiUrl}/register`, createUserRequest, {
+        withCredentials: true,
+      })
       .pipe(catchError(handleApiError));
   }
 
   public login(loginCreds: ILoginRequest) {
     return this.http
-      .post<ILoginResponse>(`${this.authApiUrl}/login`, loginCreds)
+      .post<ILoginResponse>(`${this.authApiUrl}/login`, loginCreds, {
+        withCredentials: true,
+      })
       .pipe(catchError(handleApiError));
   }
 
@@ -36,6 +40,9 @@ export class AuthApiService {
     return this.http.post<IRefreshTokenResponse>(
       `${this.authApiUrl}/refresh-token`,
       {},
+      {
+        withCredentials: true,
+      },
     );
   }
 }
