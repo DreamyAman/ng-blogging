@@ -37,6 +37,7 @@ export class LoginComponent {
         Validators.maxLength(10),
       ]),
     ],
+    keepLoggedIn: [false],
   });
 
   public readonly formErrorMessages: IFormFieldsErrors = {

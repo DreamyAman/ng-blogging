@@ -16,6 +16,7 @@ import { ICreateUserRequest, ILoginRequest, ILoginResponse } from "../types";
 import { AuthApiService } from "./auth-api.service";
 import { IUser } from "../../common/types";
 import { environment } from "../../../environments/environment";
+import { jwtDecode } from "jwt-decode";
 
 @Injectable({
   providedIn: "root",
@@ -146,19 +147,28 @@ export class AuthService {
   }
 
   public isTokenNearExpiry() {
-    const iat = Date.now();
-    const exp = iat + 15 * 1000;
+    try {
+      const decoded = jwtDecode(this.authToken() || "");
+      const iat = decoded.iat || Date.now();
+      const exp = decoded.exp || iat + 15 * 60 * 1000;
 
-    const totalLifetime = exp - iat;
-    const refreshDelay = totalLifetime * 0.8; // 80% of total time
-    const refreshTime = iat + refreshDelay;
-    const timeUntilRefresh = refreshTime - Date.now();
+      const totalLifetime = exp - iat;
+      const refreshDelay = totalLifetime * 0.8; // 80% of total time
+      const refreshTime = iat + refreshDelay;
+      const timeUntilRefresh = refreshTime - Date.now();
 
-    return {
-      needRefresh: Date.now() >= refreshTime,
-      timeUntilRefresh,
-      refreshDelay,
-    };
+      return {
+        needRefresh: Date.now() >= refreshTime,
+        timeUntilRefresh,
+        refreshDelay,
+      };
+    } catch {
+      return {
+        needRefresh: true,
+        timeUntilRefresh: 0,
+        refreshDelay: 0,
+      };
+    }
   }
 
   public refreshToken() {
@@ -169,7 +179,6 @@ export class AuthService {
     this.refreshTokenObservable$ = this.authApi.refreshToken().pipe(
       map((resp) => resp.data.accessToken),
       tap((accessToken) => this.updateToken(accessToken)),
-      switchMap((accessToken) => of(accessToken)),
       shareReplay(1), // share one subscription/Observable across requests
       finalize(() => {
         this.refreshTokenObservable$ = null;
@@ -185,10 +194,20 @@ export class AuthService {
   }
 
   public logout() {
-    this.clearBackgroundRefreshTimer();
-    this.authToken.set(null);
-    this.userData.set(null);
-    //clear local storage for app data
-    window.localStorage.clear();
+    this.authApi
+      .logout()
+      .pipe(
+        finalize(() => {
+          this.clearBackgroundRefreshTimer();
+          this.authToken.set(null);
+          this.userData.set(null);
+          //clear local storage for app data
+          window.localStorage.clear();
+        }),
+      )
+      .subscribe({
+        // logout even server errors occur
+        error: console.warn,
+      });
   }
 }

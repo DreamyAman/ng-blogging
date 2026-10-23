@@ -45,4 +45,14 @@ export class AuthApiService {
       },
     );
   }
+
+  public logout() {
+    return this.http.post<IRefreshTokenResponse>(
+      `${this.authApiUrl}/logout`,
+      {},
+      {
+        withCredentials: true, // along with refresh token cookie
+      },
+    );
+  }
 }

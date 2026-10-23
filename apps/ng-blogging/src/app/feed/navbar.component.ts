@@ -1,9 +1,11 @@
-import { Component } from "@angular/core";
+import { Component, inject } from "@angular/core";
 import { RouterLink } from "@angular/router";
+import { AuthService } from "../auth/services/auth.service";
+import { TitleCasePipe } from "@angular/common";
 
 @Component({
   selector: "app-navbar",
-  imports: [RouterLink],
+  imports: [RouterLink, TitleCasePipe],
   template: `<nav
     class="navbar bg-white border-bottom py-3 position-sticky sticky-top"
   >
@@ -32,35 +34,53 @@ import { RouterLink } from "@angular/router";
       </div>
 
       <section class="d-grid gap-2 d-md-flex justify-content-md-end">
-        <button
-          class="btn btn-primary me-md-2"
-          routerLink="/auth/login"
-          type="button"
-        >
-          Login
-        </button>
-        <div class="dropdown">
+        @if (!auth.isAuthenticated()) {
           <button
-            class="btn btn-secondary dropdown-toggle"
+            class="btn btn-primary me-md-2"
+            routerLink="/auth/login"
             type="button"
-            id="profileMenu"
-            data-bs-toggle="dropdown"
-            aria-expanded="false"
           >
-            Ajit Rana
+            Login
           </button>
-          <ul class="dropdown-menu" aria-labelledby="profileMenu">
-            <li>
-              <button class="dropdown-item" type="button">Profile</button>
-            </li>
-            <li><hr class="dropdown-divider" /></li>
-            <li>
-              <button class="dropdown-item" type="button">Sign out</button>
-            </li>
-          </ul>
-        </div>
+        } @else {
+          <div class="dropdown">
+            <button
+              class="btn btn-secondary dropdown-toggle"
+              type="button"
+              id="profileMenu"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              {{ auth.user()?.firstName | titlecase }}
+              {{ auth.user()?.lastName }}
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="profileMenu">
+              <li>
+                <button
+                  rotuerLink="/profile"
+                  class="dropdown-item"
+                  type="button"
+                >
+                  Profile
+                </button>
+              </li>
+              <li><hr class="dropdown-divider" /></li>
+              <li>
+                <button
+                  class="dropdown-item"
+                  type="button"
+                  (click)="auth.logout()"
+                >
+                  Sign out
+                </button>
+              </li>
+            </ul>
+          </div>
+        }
       </section>
     </div>
   </nav>`,
 })
-export class NavbarComponent {}
+export class NavbarComponent {
+  public readonly auth = inject(AuthService);
+}
