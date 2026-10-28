@@ -17,12 +17,15 @@ import { AuthApiService } from "./auth-api.service";
 import { IUser } from "../../common/types";
 import { environment } from "../../../environments/environment";
 import { jwtDecode } from "jwt-decode";
+import { Router } from "@angular/router";
 
 @Injectable({
   providedIn: "root",
 })
 export class AuthService {
   private readonly authApi = inject(AuthApiService);
+
+  private readonly router = inject(Router);
 
   public readonly isAuthenticated = computed(() => !!this.authToken());
 
@@ -149,8 +152,8 @@ export class AuthService {
   public isTokenNearExpiry() {
     try {
       const decoded = jwtDecode(this.authToken() || "");
-      const iat = decoded.iat || Date.now();
-      const exp = decoded.exp || iat + 15 * 60 * 1000;
+      const iat = decoded.iat ? decoded.iat * 1000 : Date.now();
+      const exp = decoded.exp ? decoded.exp * 1000 : iat + 15 * 60 * 1000;
 
       const totalLifetime = exp - iat;
       const refreshDelay = totalLifetime * 0.8; // 80% of total time
@@ -203,6 +206,8 @@ export class AuthService {
           this.userData.set(null);
           //clear local storage for app data
           window.localStorage.clear();
+
+          this.router.navigate(["auth", "login"]);
         }),
       )
       .subscribe({

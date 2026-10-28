@@ -1,10 +1,8 @@
 import { Component } from "@angular/core";
-import { RouterOutlet } from "@angular/router";
-import { NavbarComponent } from "./navbar.component";
 
 @Component({
   selector: "app-feed",
-  template: `<app-navbar /> <router-outlet />`,
-  imports: [RouterOutlet, NavbarComponent],
+  template: `<h1>Public posts</h1>`,
+  imports: [],
 })
 export class FeedComponent {}

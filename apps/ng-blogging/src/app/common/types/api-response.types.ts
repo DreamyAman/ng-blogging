@@ -3,3 +3,5 @@ export interface IApiResponse<T> {
   data: T;
   message: string;
 }
+
+export type IDeleteResponse<T = unknown | ""> = IApiResponse<T>;

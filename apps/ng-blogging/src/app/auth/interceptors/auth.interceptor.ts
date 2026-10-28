@@ -9,6 +9,7 @@ import {
 import { inject } from "@angular/core";
 import { catchError, Observable, switchMap, throwError } from "rxjs";
 import { AuthService } from "../services/auth.service";
+import { SKIP_AUTH_TOKEN } from "../../common/http/skip-auth.context";
 
 export const authInterceptor: HttpInterceptorFn = (
   req: HttpRequest<unknown>,
@@ -21,7 +22,9 @@ export const authInterceptor: HttpInterceptorFn = (
     req.url.match("/auth/register") ||
     req.url.match("/auth/refresh-token");
 
-  if (canSkipUrl) {
+  const skipAuthToken = SKIP_AUTH_TOKEN;
+
+  if (canSkipUrl || skipAuthToken) {
     return next(req);
   }
 

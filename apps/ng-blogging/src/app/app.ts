@@ -5,6 +5,6 @@ import { AlertComponent } from "./common/alert/components/alert.component";
 @Component({
   imports: [RouterOutlet, AlertComponent],
   selector: "app-root",
-  template: `<app-alert /> <router-outlet></router-outlet>`,
+  template: `<app-alert /> <router-outlet />`,
 })
 export class App {}
