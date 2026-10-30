@@ -3,7 +3,7 @@
     <a class="navbar-brand fw-bold fs-4 mb-0 cursor-pointer" routerLink="/">Blogging</a>
 
     @if (auth.isAuthenticated()) {
-    <a class="link text-decoration-none" routerLink="/my-posts">My Posts</a>
+    <a class="link text-decoration-none" routerLink="blog/my-blogs">My Posts</a>
     }
 
     <div class="flex-grow-1 mx-4 d-flex justify-content-center">
@@ -21,7 +21,7 @@
       </button>
       } @else {
 
-      <button class="btn btn-primary me-md-2" routerLink="/blogs/new" type="button">
+      <button class="btn btn-primary me-md-2" routerLink="/blog/new" type="button">
         New post
       </button>
 

@@ -1,4 +1,4 @@
-<form [formGroup]='newPostForm' (ngSubmit)="newPost()">
+<form [formGroup]='blogForm' (ngSubmit)="onSubmit()" class="needs-validation">
   <div class="container py-5" style="max-width: 900px;">
     <div class="card border-0 shadow-sm">
       <div class="card-body p-4 p-md-5">
@@ -6,20 +6,55 @@
         <h2 class="fw-bold mb-4">New post</h2>
 
         <div class="mb-4">
-          <label for="title" class="form-label">Title</label>
-          <input type="text" class="form-control" id="title" formControlName="title">
+          <label for="title" class="form-label fw-semibold">Title <span class="text-danger">*</span></label>
+          <input type="text" class="form-control" [ngClass]="titleError.isInvalid() ? 'is-invalid' : ''" name="title"
+            id="title" formControlName="title" required>
+
+          <app-form-field-error #titleError [formErrorMessages]="formErrorMessages" controlName="title">
+            <ng-template let-errorMsg="error">
+              <div class="text-danger">
+                {{ errorMsg() }}
+              </div>
+            </ng-template>
+          </app-form-field-error>
         </div>
 
-        <div class="mb-4">
-          <label for="content" class="form-label">Content</label>
-          <textarea class="form-control" id="content" rows="6" formControlName="content"></textarea>
+        <div class="mb-1">
+          <label for="content" class="form-label fw-semibold">Content <span class="text-danger">*</span></label>
+          <textarea class="form-control" [ngClass]="contentError.isInvalid() ? 'is-invalid' : ''" id="content" rows="6"
+            formControlName="content"></textarea>
+
+          <div class="form-text">Must be 2-200 characters long.</div>
+
+          <app-form-field-error #contentError [formErrorMessages]="formErrorMessages" controlName="content">
+            <ng-template let-errorMsg="error">
+              <div class="text-danger">
+                {{ errorMsg() }}
+              </div>
+            </ng-template>
+          </app-form-field-error>
         </div>
 
       </div>
 
-      <div class="card-footer bg-white border-top d-flex justify-content-end gap-2 p-4">
-        <button type="button" class="btn btn-light border">Cancel</button>
-        <button type="submit" class="btn btn-primary">Save draft</button>
+      <p class="text-center">This post will be saved as a draft. Publish it later from the actions.</p>
+
+      <div class="d-flex justify-content-end gap-2 p-4">
+
+
+        <button type="button" [disabled]="isSubmitting()" (click)="resetForm()"
+          class="btn btn-light border">Cancel</button>
+
+        <button type="submit" [disabled]="isSubmitting()" class="btn btn-primary">
+
+          @if(!isSubmitting()) {
+          <span>Save draft</span>
+          } @else {
+          <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+          Creating...
+          }
+        </button>
+
       </div>
     </div>
   </div>

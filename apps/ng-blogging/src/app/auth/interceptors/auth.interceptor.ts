@@ -22,7 +22,7 @@ export const authInterceptor: HttpInterceptorFn = (
     req.url.match("/auth/register") ||
     req.url.match("/auth/refresh-token");
 
-  const skipAuthToken = SKIP_AUTH_TOKEN;
+  const skipAuthToken = req.context.get(SKIP_AUTH_TOKEN);
 
   if (canSkipUrl || skipAuthToken) {
     return next(req);

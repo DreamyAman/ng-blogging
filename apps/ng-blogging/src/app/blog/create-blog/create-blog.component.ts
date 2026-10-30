@@ -9,15 +9,15 @@ import {
   mapServerFormErrors,
   updateValueAndValidity,
 } from "../../common/form/utils/form.utils";
-import { ICreateUserRequest } from "../types";
+import { ICreateBlogRequest } from "../types";
 import { ErrorStatus, ISerializedErrorResponse } from "../../common/types";
-import { Router, RouterLink } from "@angular/router";
+import { Router } from "@angular/router";
 import { startWithTap } from "../../common/rxjs/operators";
-import { AuthService } from "../services/auth.service";
 import { AlertService } from "../../common/alert/services";
+import { BlogApiService } from "../services/blog-api.service";
 
 @Component({
-  imports: [ReactiveFormsModule, FormFieldError, NgClass, RouterLink],
+  imports: [ReactiveFormsModule, FormFieldError, NgClass],
   selector: "app-create-blog",
   templateUrl: "./create-blog.component.html",
 })
@@ -37,7 +37,11 @@ export class CreateBlogComponent {
     ],
     content: [
       null,
-      Validators.compose([Validators.minLength(2), Validators.maxLength(200)]),
+      Validators.compose([
+        Validators.required,
+        Validators.minLength(2),
+        Validators.maxLength(200),
+      ]),
     ],
   });
 
@@ -56,9 +60,14 @@ export class CreateBlogComponent {
 
   protected isSubmitting = signal(false);
 
-  private readonly auth = inject(AuthService);
+  private readonly blogApi = inject(BlogApiService);
 
   private readonly alert = inject(AlertService);
+
+  protected resetForm() {
+    this.blogForm.reset();
+    this.isSubmitting.set(false);
+  }
 
   protected onSubmit() {
     if (this.blogForm.invalid) {
@@ -66,10 +75,10 @@ export class CreateBlogComponent {
       return;
     }
 
-    const registerReq = this.blogForm.value as unknown as ICreateUserRequest;
+    const createBlogReq = this.blogForm.value as unknown as ICreateBlogRequest;
 
-    this.auth
-      .register(registerReq)
+    this.blogApi
+      .create(createBlogReq)
       .pipe(
         startWithTap(() => {
           this.blogForm.disable();
@@ -77,7 +86,10 @@ export class CreateBlogComponent {
         }),
       )
       .subscribe({
-        next: () => this.router.navigate(["/feed"]),
+        next: () => {
+          this.alert.success("Blog created", "Blog has been created.");
+          this.router.navigate(["/blog/my-blogs"]);
+        },
         error: (error: ISerializedErrorResponse) =>
           this.handleServerErrorResp(error),
       });
@@ -93,23 +105,10 @@ export class CreateBlogComponent {
           mapServerFormErrors(this.blogForm, error);
           break;
 
-        case ErrorStatus.ALREADY_EXISTS:
-          this.handleAlreadyExistsEmailError(error.message);
-          break;
-
         default:
           this.alert.error("Failed", error.message);
           break;
       }
     }
-  }
-
-  private handleAlreadyExistsEmailError(message: string) {
-    this.blogForm.controls.email.setErrors(
-      {
-        alreadyExists: message,
-      },
-      { emitEvent: true },
-    );
   }
 }

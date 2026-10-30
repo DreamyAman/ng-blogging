@@ -10,6 +10,7 @@ import {
   ISearchBlogResponse,
   IUpdateBlogRequest,
   IUpdateBlogResponse,
+  IUpdateBlogStatusRequest,
   IUpdateBlogStatusResponse,
 } from "../types";
 import { environment } from "../../../environments/environment";
@@ -44,9 +45,9 @@ export class BlogApiService {
 
   public updateStatus(
     id: string,
-    updateStatusRequest: IUpdateBlogRequest,
+    updateStatusRequest: IUpdateBlogStatusRequest,
   ): Observable<IUpdateBlogStatusResponse> {
-    const url = `${this.blogApiUrl}/${id}`;
+    const url = `${this.blogApiUrl}/${id}/status`;
 
     return this.http
       .patch<IUpdateBlogStatusResponse>(url, updateStatusRequest)
@@ -84,14 +85,16 @@ export class BlogApiService {
     };
 
     // can add auth token
-    if (!skipAuth) {
+    if (skipAuth) {
       const httpCtx = new HttpContext().set(SKIP_AUTH_TOKEN, true);
 
       Object.assign(req, { context: httpCtx });
     }
 
+    const url = `${this.blogApiUrl}/search`;
+
     return this.http
-      .get<ISearchBlogResponse>(this.blogApiUrl, req)
+      .get<ISearchBlogResponse>(url, req)
       .pipe(catchError(handleApiError));
   }
 
